@@ -1,16 +1,15 @@
 package com.learning.ayush.crudSpringBootDemo.dto;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 public class createReqDTO {
 
     @Size(min = 2, max = 50, message = "Name must be between 2 to 50 characters long.")
     @NotBlank(message = "Name cannot be empty, blank or null")
     private String name;
+
     @NotBlank(message = "Email cannot be empty, blank or null")
+    @Email(message = "Wrong email format")
     private String email;
 
     @NotNull(message = "Age cannot be null")

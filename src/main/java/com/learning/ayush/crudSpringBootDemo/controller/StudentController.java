@@ -1,7 +1,7 @@
 package com.learning.ayush.crudSpringBootDemo.controller;
 
 import com.learning.ayush.crudSpringBootDemo.dto.*;
-import com.learning.ayush.crudSpringBootDemo.entity.Student;
+//import com.learning.ayush.crudSpringBootDemo.entity.Student;
 import com.learning.ayush.crudSpringBootDemo.service.StudentService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -83,7 +83,6 @@ public class StudentController {
     //Soft Delete
     @PatchMapping("/soft-delete/{id}")
     public ResponseEntity<String> deleteStudentSoftly(@PathVariable Long id){
-
 
          studentService.deleteStudentSoftly(id);
 
