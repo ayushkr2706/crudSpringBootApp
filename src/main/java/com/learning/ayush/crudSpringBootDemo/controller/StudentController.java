@@ -1,8 +1,6 @@
 package com.learning.ayush.crudSpringBootDemo.controller;
 
-import com.learning.ayush.crudSpringBootDemo.dto.createReqDTO;
-import com.learning.ayush.crudSpringBootDemo.dto.createRespDTO;
-import com.learning.ayush.crudSpringBootDemo.dto.getRespDTO;
+import com.learning.ayush.crudSpringBootDemo.dto.*;
 import com.learning.ayush.crudSpringBootDemo.entity.Student;
 import com.learning.ayush.crudSpringBootDemo.service.StudentService;
 import jakarta.validation.Valid;
@@ -49,23 +47,23 @@ public class StudentController {
     public ResponseEntity<List<getRespDTO>> getStudent(){
         List<getRespDTO> fetchedStudents = studentService.getAllStudents();
 
-        if(fetchedStudents == null){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
+//        if(fetchedStudents == null){
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+//        }
 
         return ResponseEntity.status(HttpStatus.OK).body(fetchedStudents);
     }
 
     //Update Student
     @PutMapping("/update/{id}")
-    public ResponseEntity<Student> updateStudent(@PathVariable Long id,
-                                                 @RequestBody Student student){
+    public ResponseEntity<UpdateRespDTO> updateStudent(@PathVariable Long id,
+                                                 @RequestBody UpdateReqDTO student){
 
-        Student updatedStudent = studentService.updateStudent(id, student);
+        UpdateRespDTO updatedStudent = studentService.updateStudent(id, student);
 
-        if(updatedStudent == null){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
+//        if(updatedStudent == null){
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+//        }
 
         return ResponseEntity.status(HttpStatus.OK).body(updatedStudent);
     }
@@ -74,11 +72,12 @@ public class StudentController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteStudent(@PathVariable Long id){
 
-        Boolean isDeleted = studentService.deleteStudent(id);
-        if(!isDeleted){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Record not deleted");
-        }
-        return ResponseEntity.status(HttpStatus.OK).body("Record deleted successfully");
+        studentService.deleteStudent(id);
+//        if(!isDeleted){
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Record not deleted");
+//        }
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .build();
     }
 
     //Soft Delete
@@ -86,11 +85,11 @@ public class StudentController {
     public ResponseEntity<String> deleteStudentSoftly(@PathVariable Long id){
 
 
-        Boolean isDeleted = studentService.deleteStudentSoftly(id);
+         studentService.deleteStudentSoftly(id);
 
-        if(!isDeleted){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Record doesn't exist");
-        }
+//        if(!isDeleted){
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Record doesn't exist");
+//        }
 
         return ResponseEntity.status(HttpStatus.OK).body("Record Deleted successfully");
     }

@@ -1,8 +1,6 @@
 package com.learning.ayush.crudSpringBootDemo.service;
 
-import com.learning.ayush.crudSpringBootDemo.dto.createReqDTO;
-import com.learning.ayush.crudSpringBootDemo.dto.createRespDTO;
-import com.learning.ayush.crudSpringBootDemo.dto.getRespDTO;
+import com.learning.ayush.crudSpringBootDemo.dto.*;
 import com.learning.ayush.crudSpringBootDemo.entity.Student;
 import com.learning.ayush.crudSpringBootDemo.exception.DuplicateResourceException;
 import com.learning.ayush.crudSpringBootDemo.exception.ResourceNotFoundException;
@@ -50,7 +48,7 @@ public class StudentService {
          */
 
         Student fetchedStudent = repository
-                .findById(id)
+                .findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Student with id " + id + " does not exist."));
 
         return mapToGetResponse(fetchedStudent);
@@ -62,49 +60,50 @@ public class StudentService {
 
     }
 
-    public Student updateStudent(Long id, Student student){
-        Optional<Student> existingStudent = repository.findByIdAndIsDeletedFalse(id);
-        if(existingStudent.isEmpty()){
-            return null;
-        }
+    public UpdateRespDTO updateStudent(Long id, UpdateReqDTO student){
+        //Optional<Student> existingStudent = repository.findByIdAndIsDeletedFalse(id);
+        //if(existingStudent.isEmpty()){
+          //  return null;
 
-        Student studentToUpdate = existingStudent.get();
-        studentToUpdate.setName(student.getName());
-        studentToUpdate.setEmail(student.getEmail());
-        studentToUpdate.setRollNo(student.getRollNo());
-        studentToUpdate.setAge(student.getAge());
-        studentToUpdate.setSubject(student.getSubject());
+        Student existingStudent = repository
+                .findByIdAndIsDeletedFalse(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Student with id " + id + " does not exist."));
 
-        return repository.save(studentToUpdate);
+        existingStudent.setName(student.getName());
+//        existingStudent.setEmail(student.getEmail());
+//        existingStudent.setRollNo(student.getRollNo());
+        existingStudent.setAge(student.getAge());
+        existingStudent.setSubject(student.getSubject());
 
+        repository.save(existingStudent);
+
+        return mapToUpdateResp(existingStudent);
     }
 
-    public Boolean deleteStudent(Long id){
+    public void deleteStudent(Long id){
 
-        Boolean doesExist = repository.existsById(id);
+        Student studentToBeDeleted =  repository
+                        .findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Student with id " + id + " does not exists."));
 
-        if(!doesExist){
-            return false;
-        }
-
-        repository.deleteById(id);
-        return true;
+        repository.delete(studentToBeDeleted);
     }
 
-    public Boolean deleteStudentSoftly(Long id){
+    public void deleteStudentSoftly(Long id){
 
-        Optional <Student> existingStudent = repository.findByIdAndIsDeletedFalse(id);
+        //Optional <Student> existingStudent = repository.findByIdAndIsDeletedFalse(id);
 
-        if(existingStudent.isEmpty()){
-            return false;
-        }
+        Student existingStudent = repository.findByIdAndIsDeletedFalse(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Student with id " + id + " does not exists."));
 
-        Student studentToSave = existingStudent.get();
+//        if(existingStudent.isEmpty()){
+//            return false;
+//        }
 
-        studentToSave.setDeleted(true);
-        repository.save(studentToSave);
-        return true;
+//        Student studentToSave = existingStudent.get();
 
+        existingStudent.setDeleted(true);
+        repository.save(existingStudent);
     }
 
     private Student mapToEntity(createReqDTO req){
@@ -179,5 +178,18 @@ public class StudentService {
         }
 
         return allStudents;
+    }
+
+    private UpdateRespDTO mapToUpdateResp(Student student){
+
+        UpdateRespDTO response = new UpdateRespDTO();
+
+        response.setName(student.getName());
+        response.setEmail(student.getEmail());
+        response.setRollNo(student.getRollNo());
+        response.setSubject(student.getSubject());
+        response.setUpdatedAt(LocalDateTime.now());
+
+        return response;
     }
 }
